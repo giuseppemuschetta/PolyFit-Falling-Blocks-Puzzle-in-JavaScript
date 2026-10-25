@@ -1,0 +1,5 @@
+body { font: 15px/1.6 ui-monospace, monospace; margin: 32px; background: #fdf7ec; color: #1f1b16; }
+h1 { font-size: 1.1rem; }
+pre { white-space: pre-wrap; }
+.pass pre { color: #0f766e; }
+.fail pre { color: #c2410c; }

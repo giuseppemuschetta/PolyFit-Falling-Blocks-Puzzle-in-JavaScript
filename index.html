@@ -1,0 +1,256 @@
+<!doctype html>
+<!-- © 2026 Giuseppe Muschetta. Released under the MIT License: see LICENSE. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="copyright" content="© 2026 Giuseppe Muschetta. MIT License.">
+  <title>PolyFit: the 3-minute challenge · Giuseppe Muschetta</title>
+  <meta name="description" content="PolyFit, a falling-blocks puzzle with modern rules by Giuseppe Muschetta: T-spins, combos, back-to-back. Three minutes to score as much as you can.">
+  <meta name="color-scheme" content="light dark">
+  <meta property="og:title" content="PolyFit: the 3-minute challenge · Giuseppe Muschetta">
+  <meta property="og:description" content="Three minutes, one score. A falling-blocks puzzle with modern rules, hand-built from scratch: T-spins, combos, back-to-back. Can you beat it?">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://giuseppemuschetta.com/challenge/">
+  <meta property="og:site_name" content="Giuseppe Muschetta">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://giuseppemuschetta.com/assets/og/challenge.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="PolyFit: the 3-minute challenge by Giuseppe Muschetta. 3 min on the clock, one score; 15 levels on the official speed curve; 0 frameworks or libraries, hand-built.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PolyFit: the 3-minute challenge · Giuseppe Muschetta">
+  <meta name="twitter:description" content="Three minutes, one score. A falling-blocks puzzle with modern rules, hand-built from scratch: T-spins, combos, back-to-back. Can you beat it?">
+  <meta name="twitter:image" content="https://giuseppemuschetta.com/assets/og/challenge.png">
+  <link rel="canonical" href="https://giuseppemuschetta.com/challenge/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <link rel="stylesheet" href="styles/polyfit.css">
+  <script src="src/theme-init.js"></script>
+  <script type="module" src="src/main.js"></script>
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap">
+      <a class="mark" href="https://giuseppemuschetta.com/"><i>gm</i><span>Giuseppe Muschetta</span></a>
+      <nav class="links">
+        <a href="https://giuseppemuschetta.com/#work"><span class="l-long">← All projects</span><span class="l-short">← Work</span></a>
+        <a class="hide-s" href="https://giuseppemuschetta.com/#contact">Contact</a>
+      </nav>
+      <button class="icon-btn" id="theme-btn" type="button" aria-label="Toggle light and dark theme">◐</button>
+    </div>
+  </header>
+
+  <div class="title-row">
+    <div class="brand">
+      <h1>Poly<em>Fit</em></h1>
+      <p class="slogan">the only fit that never overfits.</p>
+    </div>
+    <div class="toggles">
+      <button class="chip" id="music-btn" type="button" aria-pressed="false">Music off</button>
+      <button class="chip" id="sound-btn" type="button" aria-pressed="false">Sound off</button>
+    </div>
+  </div>
+
+  <main class="stage" id="stage">
+    <aside class="side side-left">
+    <section class="panel hold-panel" aria-label="Hold">
+      <h2 class="label">Hold <kbd>C</kbd></h2>
+      <canvas id="hold"></canvas>
+    </section>
+
+    <section class="panel stats" aria-label="Game status">
+      <div class="stat score-stat"><span class="label">Score</span><b id="score">0</b><span class="pace" id="pace" hidden></span></div>
+      <div class="stat" id="time-stat"><span class="label">Time</span><b id="time">3:00</b></div>
+      <div class="stat"><span class="label">Level</span><b id="level">1</b></div>
+      <div class="stat"><span class="label">Lines</span><b id="lines">0</b></div>
+    </section>
+
+    <section class="panel rival" id="rival" hidden aria-label="Your rival, on the same pieces">
+      <h2 class="label">Rival</h2>
+      <p class="rival-name" id="rival-name"></p>
+      <canvas id="rival-board" aria-hidden="true"></canvas>
+      <p class="rival-line"><b id="rival-score">0</b><span id="rival-move"></span></p>
+    </section>
+
+    <section class="panel watchbar" id="watchbar" hidden aria-label="Replay">
+      <h2 class="label">Watching</h2>
+      <p class="watch-name" id="watch-name"></p>
+      <div class="watch-buttons">
+        <button class="chip" id="watch-speed" type="button" aria-label="Replay speed">1×</button>
+        <button class="chip" id="watch-again" type="button" hidden>Watch again</button>
+        <button class="chip" id="watch-stop" type="button">Stop <kbd>Esc</kbd></button>
+      </div>
+    </section>
+
+    <section class="panel dealt" aria-label="Statistics: the pieces so far, by shape">
+      <h2 class="label">Statistics</h2>
+      <div class="dealt-grid" id="dealt-grid">
+        <canvas id="dealt-shapes" aria-hidden="true"></canvas>
+      </div>
+      <p class="dealt-sum"><span class="label">Total</span><b id="dealt-total">0</b></p>
+    </section>
+    </aside>
+
+    <div class="well" id="well">
+      <canvas id="board" role="img" aria-label="The PolyFit board"></canvas>
+      <div class="popups" id="popups"></div>
+      <p class="sr-only" id="live" aria-live="polite"></p>
+
+      <div class="overlay intro" id="intro">
+        <p class="eyebrow" id="intro-eyebrow">The 3-minute challenge</p>
+        <h2 id="intro-title">Three minutes. <em>One score.</em></h2>
+        <p class="lede" id="intro-lede">Modern rules: T-spins, back-to-back, combos. Score as much as you can before the clock runs out.</p>
+        <p class="note" id="intro-note" hidden></p>
+        <p class="record" id="intro-record" hidden></p>
+        <p class="best" id="intro-best" hidden></p>
+        <button class="btn primary" id="play-btn" type="button"><span id="play-label">Play</span> <kbd>Enter</kbd></button>
+        <p class="intro-more" id="intro-more" hidden>
+          <button class="link-btn" id="race-btn" type="button" hidden>Race my record game</button>
+          <button class="link-btn" id="watch-btn" type="button" hidden>Watch their game</button>
+          <button class="link-btn" id="leave-btn" type="button" hidden>New pieces instead</button>
+        </p>
+        <p class="keys only-keys">← → move · ↑ rotate · Space drop</p>
+        <p class="keys only-touch">Drag to move · tap to rotate · flick down to drop</p>
+      </div>
+
+      <div class="overlay countdown" id="countdown" hidden aria-hidden="true"><b id="count"></b></div>
+
+      <div class="overlay paused" id="paused" hidden>
+        <h2>Paused</h2>
+        <p class="lede">The board stays hidden while the game is paused.</p>
+        <button class="btn primary" id="resume-btn" type="button">Resume <kbd>Esc</kbd></button>
+        <button class="btn" id="restart-btn" type="button">Restart <kbd>R</kbd></button>
+      </div>
+    </div>
+
+    <aside class="side side-right">
+    <section class="panel next-panel" aria-label="Next pieces">
+      <h2 class="label">Next</h2>
+      <canvas id="next"></canvas>
+    </section>
+
+    <details class="panel scoring" id="scoring" open>
+      <summary>How scoring works</summary>
+      <dl class="points">
+        <div><dt>Single</dt><dd>100</dd></div>
+        <div><dt>Double</dt><dd>300</dd></div>
+        <div><dt>Triple</dt><dd>500</dd></div>
+        <div><dt>PolyFit! <small>4 lines</small></dt><dd>800</dd></div>
+        <div><dt>T-spin Single</dt><dd>800</dd></div>
+        <div><dt>T-spin Double</dt><dd>1,200</dd></div>
+        <div><dt>T-spin Triple</dt><dd>1,600</dd></div>
+        <div><dt>T-spin Mini</dt><dd>100–400</dd></div>
+        <div><dt>Perfect clear</dt><dd>+800–3,200</dd></div>
+        <div><dt>Back-to-back</dt><dd>×1.5</dd></div>
+        <div><dt>Combo</dt><dd>+50 × combo</dd></div>
+        <div><dt>Drops</dt><dd>1 · 2 per row</dd></div>
+      </dl>
+      <p>Everything × level, except drops. One level every 10 lines. <a href="#moves">The moves, explained ↓</a></p>
+    </details>
+    </aside>
+
+    <div class="touchbar" id="touchbar">
+      <button class="pad" type="button" data-button="rotateCCW" aria-label="Rotate left">↺</button>
+      <button class="pad" type="button" data-button="hold" aria-label="Hold">Hold</button>
+      <button class="pad" type="button" data-button="pause" aria-label="Pause">Ⅱ</button>
+    </div>
+  </main>
+
+  <section class="summary" id="summary" hidden></section>
+
+  <section class="boards" id="boards" aria-labelledby="boards-title">
+    <h2 id="boards-title" class="label">Leaderboards</h2>
+    <div class="boards-grid">
+      <div class="board-block">
+        <h3>Hall of Fame</h3>
+        <p class="board-note">They beat my record and sent me their game. Each game is replayed in your browser, move by move: no score here can be made up.</p>
+        <table class="board-table" id="hall-table" hidden>
+          <thead><tr><th scope="col" class="place">#</th><th scope="col">Name</th><th scope="col" class="num">Score</th><th scope="col" class="when">Date</th><th scope="col" class="go"><span class="sr-only">Replay</span></th></tr></thead>
+          <tbody id="hall-body"></tbody>
+        </table>
+        <p class="board-empty" id="hall-empty"></p>
+      </div>
+      <div class="board-block">
+        <h3>Top 10 on this device</h3>
+        <p class="board-note">Like an arcade cabinet: your best games, with the name you type at the end. They stay in this browser.</p>
+        <table class="board-table" id="local-table" hidden>
+          <thead><tr><th scope="col" class="place">#</th><th scope="col">Name</th><th scope="col" class="num">Score</th><th scope="col" class="when">Date</th><th scope="col" class="go"><span class="sr-only">Replay</span></th></tr></thead>
+          <tbody id="local-body"></tbody>
+        </table>
+        <p class="board-empty" id="local-empty">Your games will appear here, best first.</p>
+        <button class="link-btn" id="clear-top" type="button" hidden>Clear this list</button>
+      </div>
+      <div class="board-block">
+        <h3>Challenge a friend</h3>
+        <p class="board-note">At the end of a game, “Challenge a friend” makes a link with your whole game inside: your name, the pieces and every move, in about 1,500 characters.</p>
+        <p class="board-note">Whoever opens it plays the same pieces, with your game replayed next to theirs. No account, no server: the link is the game, and their browser checks the score by playing it again.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="help" aria-labelledby="help-title">
+    <h2 id="help-title" class="label">Controls</h2>
+    <div class="controls">
+      <dl class="keys-list only-keys">
+        <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Move</dd></div>
+        <div><dt><kbd>↓</kbd></dt><dd>Soft drop</dd></div>
+        <div><dt><kbd>Space</kbd></dt><dd>Hard drop</dd></div>
+        <div><dt><kbd>↑</kbd> <kbd>X</kbd></dt><dd>Rotate right</dd></div>
+        <div><dt><kbd>Z</kbd></dt><dd>Rotate left</dd></div>
+        <div><dt><kbd>C</kbd> <kbd>Shift</kbd></dt><dd>Hold</dd></div>
+        <div><dt><kbd>Esc</kbd> <kbd>P</kbd></dt><dd>Pause</dd></div>
+        <div><dt><kbd>M</kbd></dt><dd>Sound on / off</dd></div>
+        <div><dt><kbd>N</kbd></dt><dd>Music on / off</dd></div>
+      </dl>
+      <dl class="keys-list only-touch">
+        <div><dt>Drag left or right</dt><dd>Move</dd></div>
+        <div><dt>Tap</dt><dd>Rotate right</dd></div>
+        <div><dt>Drag down slowly</dt><dd>Soft drop</dd></div>
+        <div><dt>Flick down</dt><dd>Hard drop</dd></div>
+        <div><dt>Flick up</dt><dd>Hold</dd></div>
+      </dl>
+      <div class="options">
+        <button class="chip" id="marks-btn" type="button" aria-pressed="true">Piece marks on</button>
+        <p>A small sign inside every piece tells them apart without relying on color.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="moves" id="moves" aria-labelledby="moves-title">
+    <h2 id="moves-title" class="label">The moves, explained</h2>
+    <dl class="moves-grid">
+      <div><dt>PolyFit!</dt><dd>Four lines at once, the biggest plain clear. Only the long I piece can do it: keep one column free for it.</dd></div>
+      <div><dt>T-spin</dt><dd>Turn a T into a tight slot as its very last move, with at least three of the four corners around its center blocked. A T-spin Double scores half as much again as a PolyFit!.</dd></div>
+      <div><dt>T-spin Mini</dt><dd>A smaller T-spin, when the corners on the side the T points to are not both blocked. Fewer points, same back-to-back bonus.</dd></div>
+      <div><dt>Back-to-back</dt><dd>PolyFit!s and T-spins that clear lines, one after the other with no plain clear in between: from the second one on, each scores ×1.5.</dd></div>
+      <div><dt>Combo</dt><dd>Clear lines with several pieces in a row: every piece after the first adds 50 × combo × level. A piece that clears nothing ends it.</dd></div>
+      <div><dt>Perfect clear</dt><dd>Leave the board completely empty: a bonus on top of the lines, up to 3,200 × level for a back-to-back PolyFit!.</dd></div>
+    </dl>
+  </section>
+
+  <section class="built" aria-labelledby="built-title">
+    <h2 id="built-title" class="label">How it's built</h2>
+    <div class="built-grid">
+      <div>
+        <h3>The rules, apart from the screen</h3>
+        <p>The engine runs in fixed steps of 1/60 of a second, with whole-number gravity and a seeded random generator. The same seed and the same inputs replay the same game, to the last point: that is how a challenge link proves its score, in the browser of whoever opens it.</p>
+      </div>
+      <div>
+        <h3>62 automated tests</h3>
+        <p>Every scoring rule, the rotation kicks, the lock delay, the clock and the challenge links. An automatic player plays full games while every rule is checked at every step, and each game is replayed to prove it comes out identical.</p>
+      </div>
+      <div>
+        <h3>For every player</h3>
+        <p>Keyboard and touch controls, light and dark themes, a mark inside every piece for color-blind players, and less motion for those who ask their system for it.</p>
+      </div>
+      <div>
+        <h3>Made from scratch</h3>
+        <p>No frameworks, no libraries, no audio files: plain JavaScript, drawing on canvas, and sounds and music made on the spot with the Web Audio API, on four 8-bit voices. The music is Korobeiniki, a Russian folk song of 1861, in a new arrangement. The colors and fonts are the site's own.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="wrap"><span>© 2026 Giuseppe Muschetta · Pisa · MIT License</span><span>Hand-built · no frameworks · <a href="https://github.com/giuseppemuschetta/PolyFit-Falling-Blocks-Puzzle-in-JavaScript">Source on GitHub</a></span></footer>
+</body>
+</html>
