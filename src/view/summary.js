@@ -4,6 +4,7 @@
 // HTML strings, so no text can ever turn into code on the page.
 
 import { TICKS_PER_SECOND } from '../engine/speed.js';
+import { PIECE_TYPES, SHAPES } from '../engine/pieces.js';
 
 const format = (n) => Math.round(n).toLocaleString('en-US');
 const percent = (part, whole) => (whole > 0 ? Math.round((part / whole) * 100) : 0);
@@ -120,6 +121,7 @@ export class Summary {
     card.append(this.statGrid(game, elapsed));
     card.append(this.minuteChart(game));
     card.append(this.sourceChart(game));
+    card.append(this.pieceChart(game));
 
     const list = el('ul', 'insights');
     for (const note of insights(game)) list.append(el('li', '', note));
@@ -304,11 +306,44 @@ export class Summary {
       const swatch = el('i', 'swatch');
       swatch.style.background = source.color;
       name.append(swatch, document.createTextNode(source.label));
-      row.append(name, el('td', '', format(points[source.key])), el('td', 'share', `${percent(points[source.key], total)}%`));
+      row.append(name, el('td', '', format(points[source.key])), el('td', 'pct', `${percent(points[source.key], total)}%`));
       body.append(row);
     }
     table.append(body);
     figure.append(table);
+    return figure;
+  }
+
+  /**
+   * The pieces of the game: how many of each shape came into play, and its share of all the
+   * pieces dealt. The bag of seven deals every shape once in every seven pieces.
+   */
+  pieceChart(game) {
+    const { dealt, pieces: placed } = game.stats;
+    const total = PIECE_TYPES.reduce((sum, type) => sum + dealt[type], 0);
+    const figure = el('figure', 'chart');
+    figure.append(el('figcaption', '', 'The pieces of this game'));
+    const list = el('ul', 'piece-list');
+    for (const type of PIECE_TYPES) {
+      const share = total > 0 ? ((dealt[type] / total) * 100).toFixed(1) : '0.0';
+      const item = el('li', 'piece');
+      item.setAttribute('aria-label', `${type}: ${format(dealt[type])} pieces, ${share}%`);
+      const box = el('span', 'piece-shape-box'); // the same height for every shape, so the numbers line up
+      box.append(shapeIcon(type));
+      item.append(box, el('b', '', format(dealt[type])), el('span', 'piece-share', `${share}%`));
+      list.append(item);
+    }
+    figure.append(list);
+    const held = game.holdType ? 1 : 0;
+    const left = total - placed - held; // the piece in play when the game ended, if any
+    const parts = [`${format(placed)} placed`];
+    if (held) parts.push('1 in hold');
+    if (left > 0) parts.push(`${format(left)} in play at the end`);
+    figure.append(
+      el('p', 'chart-note',
+        `${format(total)} pieces dealt: ${parts.join(', ')}. The bag of seven deals every piece once in every seven, ` +
+          'so in the long run each one is 1 in 7 of the pieces, 14.3%, and no count ever runs more than one ahead of the others.'),
+    );
     return figure;
   }
 
@@ -337,6 +372,33 @@ export class Summary {
     mark.addEventListener('focus', show);
     mark.addEventListener('blur', hide);
   }
+}
+
+/** A piece in its spawn state, drawn with its color from the CSS: one square per cell. */
+function shapeIcon(type) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const cells = SHAPES[type][0];
+  const xs = cells.map(([x]) => x);
+  const ys = cells.map(([, y]) => y);
+  const [x0, y0] = [Math.min(...xs), Math.min(...ys)];
+  const [w, h] = [Math.max(...xs) - x0 + 1, Math.max(...ys) - y0 + 1];
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${w * 10} ${h * 10}`);
+  svg.setAttribute('aria-hidden', 'true');
+  svg.classList.add('piece-shape');
+  svg.style.width = `${w * 0.56}em`;
+  svg.style.height = `${h * 0.56}em`;
+  for (const [x, y] of cells) {
+    const square = document.createElementNS(ns, 'rect');
+    square.setAttribute('x', String((x - x0) * 10 + 0.7));
+    square.setAttribute('y', String((y - y0) * 10 + 0.7));
+    square.setAttribute('width', '8.6');
+    square.setAttribute('height', '8.6');
+    square.setAttribute('rx', '1.8');
+    square.style.fill = `var(--piece-${type.toLowerCase()})`;
+    svg.append(square);
+  }
+  return svg;
 }
 
 function clock(seconds) {

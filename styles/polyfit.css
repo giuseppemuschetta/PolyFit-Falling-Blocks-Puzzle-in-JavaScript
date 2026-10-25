@@ -306,10 +306,18 @@ nav.links .l-short { display: none; }
 .legend { width: 100%; margin-top: 12px; border-collapse: collapse; font-size: .86rem; }
 .legend th { text-align: left; font-weight: 400; color: var(--ink-2); padding: 5px 0; }
 .legend td { text-align: right; font: 500 .8rem "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; padding: 5px 0 5px 16px; }
-.legend td.share { color: var(--muted); width: 4.5em; }
+.legend td.pct { color: var(--muted); width: 4.5em; }
 .legend tr + tr th, .legend tr + tr td { border-top: 1px solid var(--rule); }
 .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 10px; vertical-align: 0; }
 .empty { font-size: .88rem; color: var(--muted); }
+/* the pieces of the game: seven small cards, shape, count and share */
+.piece-list { list-style: none; display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.piece { display: grid; justify-items: center; align-content: start; gap: 6px; padding: 12px 4px 10px; border: 1px solid var(--rule); border-radius: 12px; background: var(--bg); }
+.piece-shape-box { height: 1.12em; display: grid; place-items: center; }
+.piece-shape { display: block; }
+.piece b { font: 600 1.2rem/1 Fraunces, Georgia, serif; font-variant-numeric: tabular-nums; }
+.piece-share { font: 500 .72rem/1 "JetBrains Mono", ui-monospace, monospace; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chart-note { margin-top: 10px; font-size: .84rem; line-height: 1.5; color: var(--ink-2); }
 .insights { margin-top: 24px; padding-left: 0; list-style: none; display: grid; gap: 8px; }
 .insights li { font-size: .95rem; color: var(--ink-2); padding-left: 18px; position: relative; }
 .insights li::before { content: ""; position: absolute; left: 0; top: .62em; width: 8px; height: 8px; border-radius: 50%; background: var(--hl); }
@@ -456,12 +464,21 @@ footer.wrap a:hover { text-decoration: underline; }
   .summary { padding: 16px 12px; }
   .summary-card { padding: 22px 18px; border-radius: 20px; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .piece-list { gap: 4px; font-size: 13px; }
+  .piece { padding: 10px 2px 8px; border-radius: 10px; }
+  .piece b { font-size: 1.05rem; }
+  .piece-share { font-size: .66rem; }
   .controls { grid-template-columns: 1fr; }
   .help, .moves, .built { padding-left: 16px; padding-right: 16px; }
   .built-grid, .moves-grid, .boards-grid { grid-template-columns: 1fr; }
   .boards { padding-left: 16px; padding-right: 16px; }
   .share { padding: 14px; }
   footer.wrap { flex-direction: column; padding-top: 28px; padding-bottom: 36px; }
+}
+
+/* narrow phones: the seven pieces of the results on two rows */
+@media (max-width: 440px) {
+  .piece-list { grid-template-columns: repeat(4, 1fr); gap: 6px; }
 }
 
 /* the smallest phones: a little less room around the title, so both buttons stay on one line */

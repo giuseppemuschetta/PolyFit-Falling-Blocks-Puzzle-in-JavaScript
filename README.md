@@ -22,7 +22,7 @@ A falling-blocks puzzle game with modern rules, written from scratch in plain Ja
 - **Leaderboards, with no server.** A top 10 of the device with names, like an arcade cabinet, kept in the browser. A Hall of Fame of the players who beat Giuseppe's record and sent him their game: each entry is a challenge link, replayed in the visitor's browser. Every game in both lists can be watched again on the board.
 - **Split times.** While playing, the gap to your best game, or to the challenger, at the same moment: "+1,240 vs your best".
 - **Statistics.** Under the score, the seven pieces in miniature, each with how many times it has come into play. With the 7-piece bag the counts never drift more than one apart.
-- **Your game, analyzed.** At the end of every game: points minute by minute, where the points came from, pieces per second, and a tip for the next game.
+- **Your game, analyzed.** At the end of every game: points minute by minute, where the points came from, how many of each piece came into play with its share of all the pieces, pieces per second, and a tip for the next game.
 - **8-bit music.** Korobeiniki, a Russian folk song of 1861, arranged for four 8-bit voices (two pulse waves, a triangle wave and noise) and played from its score with the Web Audio API: no audio files. The melody twice, then a second part of its own, 24 bars in all. It plays only while the clock runs, speeds up for the last 30 seconds, and has its own switch, apart from the sounds.
 - **Made for every player.** Keyboard and touch controls, light and dark themes, a small mark inside each piece so the pieces can be told apart without color, and optional sound synthesized on the spot with the Web Audio API.
 
