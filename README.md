@@ -8,7 +8,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/polyfit-dark.png">
-  <img src="docs/polyfit-light.png" alt="PolyFit in the browser, 34 seconds before the end of a game: the board with a stack of pieces and a ghost piece, the hold box, the score 21,610 at level 4, the Statistics panel with how many times each piece came into play, the next five pieces and the scoring table.">
+  <img src="docs/polyfit-light.png" alt="PolyFit in the browser, 34 seconds before the end of a game: the board with a stack of pieces and a ghost piece, the hold box, the score 20,824 at level 4, the Statistics panel with how many times each piece came into play, the next five pieces and the scoring table.">
 </picture>
 
 A falling-blocks puzzle game with modern rules, written from scratch in plain JavaScript: no frameworks, no libraries, no build step. Three minutes on the clock: score as much as you can.
